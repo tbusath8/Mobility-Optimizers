@@ -1,6 +1,7 @@
 import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
+import plotly.graph_objects as go
 import math
 
 
@@ -39,12 +40,16 @@ app.layout = html.Div([
         dbc.Row(
             dbc.Col([
                 html.Div([
-                    html.H1(
-                        className="card-text", id='slider-output-container', style={'textAlign': 'center'}
+                    dcc.Graph(
+                        id='gauge-chart'
                     ),
-                    html.H6("Ground Level Ozone Emissions (Metric Tons)",
-                            className="card-text",  style={'textAlign': 'center'}
-                            ),
+                    # html.H1(
+                    #     className="card-text", id='slider-output-container', style={'textAlign': 'center'}
+                    # ),
+                    
+                    # html.H6("Ground Level Ozone Emissions (Metric Tons)",
+                    #         className="card-text",  style={'textAlign': 'center'}
+                    #         ),
                     html.Hr()
                 ]
                 ),
@@ -77,12 +82,28 @@ app.layout = html.Div([
 ])
 
 
+# @app.callback(
+#     dash.dependencies.Output('slider-output-container', 'children'),
+#     [dash.dependencies.Input('my-slider', 'value')])
+# def update_output(value):
+#     return "{:,}".format(math.floor(value * (22/25.7) * 8887/1000000))
+
 @app.callback(
-    dash.dependencies.Output('slider-output-container', 'children'),
+    dash.dependencies.Output('gauge-chart', 'figure'),
     [dash.dependencies.Input('my-slider', 'value')])
 def update_output(value):
-    return "{:,}".format(math.floor(value * (22/25.7) * 8887/1000000))
-
+    val = value * (22/25.7) * 8887/1000000000
+    print(val)
+    return go.Figure(go.Indicator(
+    domain = {'x': [0, 1], 'y': [0, 1]},
+    value = val,
+    mode = "gauge+number+delta",
+    title = {'text': "Ground-Level Ozone Concentration (PPM)"},
+    delta = {'reference': 0.7, 'increasing.color':'red', 'decreasing.color':'green'},
+    gauge = {'axis': {'range': [None, 1]},
+             'steps' : [
+                 {'range': [0, 1], 'color':'white'}],
+             'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': .7}}))
 
 if __name__ == "__main__":
     app.run_server(host="0.0.0.0", port=8050, debug=True)
