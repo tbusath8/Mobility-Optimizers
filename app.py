@@ -43,15 +43,9 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='gauge-chart'
                     ),
-                    # html.H1(
-                    #     className="card-text", id='slider-output-container', style={'textAlign': 'center'}
-                    # ),
-                    
-                    # html.H6("Ground Level Ozone Emissions (Metric Tons)",
-                    #         className="card-text",  style={'textAlign': 'center'}
-                    #         ),
+
                     html.Hr()
-                ]
+                ],style={'textAlign': 'center'}
                 ),
                 dbc.Card([
                     dcc.Slider(
@@ -82,11 +76,6 @@ app.layout = html.Div([
 ])
 
 
-# @app.callback(
-#     dash.dependencies.Output('slider-output-container', 'children'),
-#     [dash.dependencies.Input('my-slider', 'value')])
-# def update_output(value):
-#     return "{:,}".format(math.floor(value * (22/25.7) * 8887/1000000))
 
 @app.callback(
     dash.dependencies.Output('gauge-chart', 'figure'),
@@ -98,7 +87,7 @@ def update_output(value):
     domain = {'x': [0, 1], 'y': [0, 1]},
     value = val,
     mode = "gauge+number+delta",
-    title = {'text': "Ground-Level Ozone Concentration (PPM)"},
+    title = {'text': "Predicted Ground-Level Ozone Concentration (PPM)"},
     delta = {'reference': 0.7, 'increasing.color':'red', 'decreasing.color':'green'},
     gauge = {'axis': {'range': [None, 1]},
              'steps' : [
